@@ -79,3 +79,12 @@ The convergence plot compares best and average fitness over generations. The fin
 ## 7. Important limitation to mention
 
 The project is a simplified educational simulation. It uses straight lines between waypoints and circular sensor ranges. It does not model actual drone physics, changing weather, line-of-sight, or guaranteed safe navigation around obstacles. The GA penalizes unsafe segments but does not use a separate pathfinder to route around them.
+
+
+## Running the experiments for the technical report
+
+Run `python experiments.py` from the project folder. It varies population size (30, 70, 110), mutation rate (0.05, 0.20, 0.35), and tournament size (2, 4, 8). Each setting is repeated with three random seeds. It also compares the Genetic Algorithm against Random Search using the same map, fitness function, and candidate-evaluation budget.
+
+The plots and CSV files are saved in `output/experiments/`. The CSV files contain the raw results for your report tables. Describe the patterns your experiment actually shows; do not claim that a larger population or mutation rate always works better. Randomized algorithms can produce different results across seeds.
+
+The fitness evaluation now includes the return leg from each UAV's final waypoint to its launch point. Energy, flight time, distance, hazard sampling, no-fly crossings, and maximum range therefore include the return trip.

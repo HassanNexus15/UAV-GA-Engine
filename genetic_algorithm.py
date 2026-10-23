@@ -26,6 +26,7 @@ class GeneticAlgorithm:
         generations: int = MAX_GENERATIONS,
         mutation_rate: float = 0.20,
         crossover_rate: float = 0.90,
+        tournament_size: int = 4,
         seed: int = 21,
     ):
         self.environment = environment
@@ -33,6 +34,7 @@ class GeneticAlgorithm:
         self.generations = generations
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
+        self.tournament_size = max(1, int(tournament_size))
         self.rng = random.Random(seed)
 
         self.best_history: list[float] = []
@@ -136,6 +138,24 @@ class GeneticAlgorithm:
                     hazard_samples.append(float(env.hazard[y, x]))
                 current = destination
 
+            # Model the return flight to the drone's launch/base location.
+            # The return leg uses cruise speed 2 and has no active sensor cost.
+            return_speed = 2
+            return_distance = math.hypot(current[0] - env.starts[drone_index][0],
+                                         current[1] - env.starts[drone_index][1])
+            drone_distance += return_distance
+            total_distance += return_distance
+            total_energy += return_distance * (1.0 + 0.18 * (return_speed - 1) ** 2)
+            total_time += return_distance / return_speed
+
+            return_cells = self.sample_segment(current, env.starts[drone_index])
+            return_blocked = sum(1 for x, y in return_cells if env.is_blocked(x, y))
+            if return_blocked:
+                blocked_segments += 1
+                blocked_samples += return_blocked
+            for x, y in return_cells:
+                hazard_samples.append(float(env.hazard[y, x]))
+
             # A range breach is penalized rather than silently ignored.
             if drone_distance > self.MAX_FLIGHT_RANGE:
                 total_constraint_penalty += 2.0 * (drone_distance - self.MAX_FLIGHT_RANGE)
@@ -174,9 +194,14 @@ class GeneticAlgorithm:
         }
         return fitness
 
-    def select_parent(self, population: list[Chromosome], tournament_size: int = 4) -> Chromosome:
-        """Tournament selection: the fittest of a small random group wins."""
-        contestants = self.rng.sample(population, min(tournament_size, len(population)))
+    def select_parent(
+        self,
+        population: list[Chromosome],
+        tournament_size: Optional[int] = None,
+    ) -> Chromosome:
+        """Tournament selection: the fittest candidate in a random group wins."""
+        size = self.tournament_size if tournament_size is None else max(1, int(tournament_size))
+        contestants = self.rng.sample(population, min(size, len(population)))
         return max(contestants, key=lambda candidate: candidate.fitness)
 
     def crossover(self, parent_a: Chromosome, parent_b: Chromosome) -> tuple[Chromosome, Chromosome]:

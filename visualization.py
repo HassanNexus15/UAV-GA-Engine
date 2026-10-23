@@ -45,7 +45,8 @@ def _draw_routes(ax, env: GridEnvironment, chromosome: Chromosome, title: str):
     _draw_map_background(ax, env, title, show_hazards=True)
     for drone_index, route in enumerate(chromosome.routes):
         color = DRONE_COLORS[drone_index % len(DRONE_COLORS)]
-        points = [env.starts[drone_index]] + [(point.x, point.y) for point in route]
+        # Show the full mission: launch -> waypoints -> return to launch.
+        points = [env.starts[drone_index]] + [(point.x, point.y) for point in route] + [env.starts[drone_index]]
         xs = [point[0] for point in points]
         ys = [point[1] for point in points]
         ax.plot(xs, ys, color=color, linewidth=2.0, marker="o", markersize=4, label=f"UAV {drone_index + 1}", zorder=5)

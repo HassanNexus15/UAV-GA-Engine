@@ -1,28 +1,28 @@
 RESCUESCOUT — BEST MISSION SUMMARY
 ======================================
 Generations completed: 90
-Best fitness: 75.10
+Best fitness: 69.08
 Priority-weighted target coverage: 100.0%
 Targets detected: 8 / 8
-Map area covered: 61.5%
-Total flight distance: 54.90
-Estimated energy cost: 162.34
-Estimated flight time: 28.50
-Average hazard exposure: 34.1%
+Map area covered: 53.0%
+Total flight distance: 96.99
+Estimated energy cost: 187.02
+Estimated flight time: 69.12
+Average hazard exposure: 33.3%
 No-fly segments crossed: 0
 Constraint penalty: 0.00
 
 WAYPOINTS (x, y, sensor power, speed)
 Sensor power is 0 (off) to 3 (high); speed is 1 (slow) to 3 (fast).
 UAV 1 starts at (1, 1):
-  WP 1: (6, 2), sensor=3, speed=2
-  WP 2: (11, 6), sensor=0, speed=2
-  WP 3: (11, 5), sensor=1, speed=3
-  WP 4: (12, 9), sensor=3, speed=2
-  WP 5: (9, 13), sensor=1, speed=2
+  WP 1: (13, 0), sensor=0, speed=1
+  WP 2: (19, 3), sensor=3, speed=2
+  WP 3: (13, 8), sensor=3, speed=2
+  WP 4: (9, 11), sensor=0, speed=2
+  WP 5: (4, 14), sensor=3, speed=2
 UAV 2 starts at (18, 1):
-  WP 1: (17, 6), sensor=2, speed=3
-  WP 2: (14, 15), sensor=3, speed=2
-  WP 3: (10, 16), sensor=0, speed=1
-  WP 4: (4, 10), sensor=3, speed=2
-  WP 5: (5, 16), sensor=3, speed=2
+  WP 1: (6, 3), sensor=0, speed=1
+  WP 2: (3, 7), sensor=3, speed=2
+  WP 3: (12, 15), sensor=0, speed=1
+  WP 4: (13, 15), sensor=3, speed=2
+  WP 5: (17, 12), sensor=1, speed=1

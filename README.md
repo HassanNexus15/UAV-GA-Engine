@@ -26,9 +26,12 @@ rescue_scout/
 ├── uav_models.py            # Waypoint and Chromosome classes
 ├── genetic_algorithm.py     # Fitness, selection, crossover, mutation, GA loop
 ├── visualization.py         # Required plots
+├── experiments.py           # Sensitivity tests and GA vs Random Search
 ├── requirements.txt         # Python dependencies
 ├── README.md
-└── output/                  # Generated plots and run summary
+└── output/
+    ├── ...                  # Main simulation plots and summary
+    └── experiments/         # Experiment plots and CSV results
 ```
 
 ## Requirements
@@ -76,7 +79,26 @@ The program prints the best mission's metrics and saves these files to `output/`
 - `generation_snapshots.png` — route and coverage comparisons at the start, middle, and end of evolution.
 - `run_summary.txt` — mission metrics and waypoint settings.
 
-The random seeds are fixed so the demo is reproducible. You can change the seeds or GA settings in `main.py` to experiment.
+The random seeds are fixed so the demo is reproducible. Each UAV's evaluated route includes its return trip to its launch point. The route plots also show this return leg.
+
+### Run the experiments for the technical report
+
+After the regular simulation, run the experiment script from the same project folder:
+
+```bash
+python experiments.py
+```
+
+The script performs three sensitivity experiments and a baseline comparison. It repeats every sensitivity setting with three random seeds and varies one parameter at a time:
+
+- Population size: 30, 70, and 110.
+- Mutation rate: 0.05, 0.20, and 0.35.
+- Tournament size: 2, 4, and 8 (higher values normally mean stronger selection pressure).
+- Genetic Algorithm versus Random Search: three paired trials using the same grid and fitness function and the same number of candidate evaluations per pair.
+
+Experiment plots and data are saved to `output/experiments/`. The folder includes four PNG charts plus CSV files with each trial's metrics and the baseline convergence curves. Use these measured results in the technical report rather than inventing or estimating experiment outcomes.
+
+Experiment settings such as seed count and generation count can be changed near the top of `experiments.py`. For the baseline comparison, the Genetic Algorithm runs for its full configured generation count so it can be compared using an equal candidate-evaluation budget.
 
 ## How the Genetic Algorithm works
 
@@ -117,11 +139,11 @@ The component scores are scaled to approximately 0–100. Target coverage is pri
 
 ## Genetic operators and constraints
 
-- **Selection:** tournament selection samples four candidates and chooses the one with the highest fitness.
+- **Selection:** tournament selection samples a configurable number of candidates (four by default) and chooses the one with the highest fitness.
 - **Crossover:** segment-swapping exchanges a continuous block of waypoint genes between parent routes.
 - **Mutation:** mostly makes small coordinate moves, with occasional larger moves; sensor power and speed may also change.
 - **Repair:** clamps coordinates to the grid and relocates waypoints that fall in blocked cells to the nearest free cell.
-- **Penalty handling:** if the straight line between waypoints crosses a no-fly cell, or a drone exceeds its allowed range, its fitness is reduced. This is important because repairing waypoints alone cannot guarantee every connecting segment is safe.
+- **Penalty handling:** if the straight line between waypoints or the return leg crosses a no-fly cell, or a drone exceeds its allowed range including the return trip, its fitness is reduced. This is important because repairing waypoints alone cannot guarantee every connecting segment is safe.
 
 ## Assumptions and limitations
 
